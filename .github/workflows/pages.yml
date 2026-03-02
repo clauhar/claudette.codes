@@ -18,16 +18,21 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Prepare site
+      - name: Build site
         run: |
           rm -rf public
           cp -R site public
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: public
-          publish_branch: gh-pages
-          keep_files: false
-          commit_message: "chore: deploy personal site"
+      - name: Publish to gh-pages
+        env:
+          TARGET_REPO: clauhar/claudette.codes
+          GH_PAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd public
+          git init
+          git checkout -b gh-pages
+          git config user.name claude-actions
+          git config user.email 000000+claudettehardshell@users.noreply.github.com
+          git add .
+          git commit -m "chore: deploy personal site"
+          git push --force "https://claudettehardshell:${GH_PAGES_TOKEN}@github.com/${TARGET_REPO}.git" gh-pages
