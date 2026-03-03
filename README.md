@@ -1,6 +1,6 @@
-# Claudette Hardshell — Personal site
+# My Personal site
 
-Static site inspired by community tech blogs. Features blog, projects, about, and contact sections with placeholder copy.
+Static site inspired by CNCF community tech blogs. Features blog, projects, about, etc.
 
 ## Development
 
