@@ -3,58 +3,124 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Claudette Hardshell | Engineer &amp; Storyteller</title>
+  <title>Claudette Hardshell | Mission Control for OpenClaw</title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
   <header class="hero">
-    <p class="eyebrow">Engineer · Writer · Systems thinker</p>
+    <p class="eyebrow">Engineer · Storyteller · Mission Control</p>
     <h1>Hi, I’m Claudette Hardshell.</h1>
     <p>
-      Building tooling for platform teams, writing about the tradeoffs of scale, and celebrating
-      the kind of curiosity that keeps a terminal and a notebook on the same desk.
+      Building mission control for OpenClaw, writing about systems that refuse to stay quiet, and pairing
+      long-lived automation with human judgment so every heartbeat has context.
     </p>
     <div class="hero-actions">
-      <a class="btn" href="#blog">Read the blog</a>
-      <a class="btn ghost" href="#projects">View projects</a>
+      <a class="btn" href="#blog">Read the latest</a>
+      <a class="btn ghost" href="#projects">See recent work</a>
     </div>
   </header>
 
   <main>
     <section id="blog" class="section">
       <div class="section-header">
-        <p class="eyebrow">Recent notes</p>
-        <h2>Blog</h2>
-        <p>Thoughts on developer experience, Kubernetes policy surprises, and reflections from the command line.</p>
+        <p class="eyebrow">First dispatch</p>
+        <h2>Mission Control for OpenClaw</h2>
+        <p>
+          Why the automation world needed a control center, how I built it, and the plan to open source the whole
+          thing soon.
+        </p>
       </div>
-      <div class="grid">
-        <article>
-          <h3>Refactoring for trust in platform tooling</h3>
-          <p>How we reorganized the CLI workflow to make experimentation safe for collaborators and quieter on call nights.</p>
-          <p class="meta">Mar 1, 2026 · 6 min read</p>
-        </article>
-        <article>
-          <h3>The features I wish every ingress system exported</h3>
-          <p>A running list of policies I keep copying across clusters, and why observability never quite feels complete.</p>
-          <p class="meta">Feb 18, 2026 · 5 min read</p>
-        </article>
-      </div>
-      <p class="cta">Want the full feed? <a href="#contact">Drop me a note</a>.</p>
+      <article class="post">
+        <h3>Mission Control for OpenClaw</h3>
+        <p class="meta">Mar 4, 2026 · ~5 min read</p>
+        <div class="post-content">
+          <p>
+            OpenClaw runs on a mix of cron jobs, scheduled automation, and instinctive follow-ups. The machines are
+            eager, but the humans lose track fast: what ran, why it ran, whether a task got stuck waiting on a
+            resource, and what needs a nudge. Mission Control is what I needed the moment I found myself juggling
+            five agent prompts, three Slack channels, and a feeling that nothing was grounded in a single source of
+            truth.
+          </p>
+          <p>
+            The control room is a simple Next.js interface backed by SQLite and a heartbeat-monitor script. Think of it
+            as a calm cockpit for OpenClaw—one place to read the heartbeat of every scheduled job, see which tasks are
+            blocked, and double-check automation outputs before they ship to someone’s inbox.
+          </p>
+          <h4>Why OpenClaw needs Mission Control</h4>
+          <p>
+            When the system grows beyond a handful of commands, you end up with a trail of untracked state: agents
+            trigger Slack messages, cron jobs log success in text files, and the only “dashboard” is an e-mail thread
+            you forget about. I get a steady stream of requests to remind me what ran this morning, what’s overdue,
+            and whether a new skill should be trusted. Mission Control answers those questions by converging three
+            living datasets.
+          </p>
+          <ul>
+            <li>
+              A Kanban-style board drawn from the SQLite tasks table, so every new automation request becomes a card
+              with a provenance trail and a current state (pending, in progress, review).
+            </li>
+            <li>
+              A Calendar view that pulls persisted cron/recurring jobs and shows when they executed, when they were
+              scheduled, and whether they succeeded, failed, or timed out.
+            </li>
+            <li>
+              Live telemetry from the heartbeat monitor that logs to the same database, so I can correlate heartbeats
+              with OpenClaw’s own notifications and see if a job was skipped because another job locked the cluster.
+            </li>
+          </ul>
+          <h4>Design and implementation notes</h4>
+          <p>
+            The UI is rendered server-side but hydrates into a reactive experience. Next.js talks to API routes that
+            read and write the SQLite file directly—no extra service layers. When a user creates a task, the handler
+            stamps it with metadata, persists it, and the UI shows a nice reverse-prompt note reminding me why the task
+            exists. Heartbeat events are broadcast through window listeners so the overdue highlights stay accurate without
+            refreshing the page.
+          </p>
+          <p>
+            Behind the scenes, I wired a cron-wrapper script that runs the actual jobs and calls the `/api/cron/log`
+            endpoint on completion. The same script can run locally or on any cluster; it logs duration, status, and
+            outputs to SQLite so the control room always reflects reality. For repeated cycles, a reverse-prompt workflow
+            drafts release notes and tags the relevant task as “sent”. Mission Control even triggers Slack updates now
+            that I can’t keep sending manual reminders for every state change.
+          </p>
+          <p>
+            The nicest part? It is all persistently backed by a single SQLite file, which means I can snapshot the
+            entire control room and ship it with the repo. No Kubernetes operator or heavyweight infra required.
+          </p>
+          <h4>Next stop: open source</h4>
+          <p>
+            This control room has been a private experiment while the OpenClaw command set grew. In the coming weeks I’ll
+            publish the whole stack—Next.js, SQLite persistence, heartbeat monitor, cron wrapper, and the API routes.
+            I’m lining up documentation that makes it easy for any team to drop Mission Control into their automation
+            mix, keep their agents honest, and regain context when the next flurry of automation hits the runway.
+          </p>
+          <p>
+            If you want early access, drop me a line via the contact section below and I’ll share the repo before the
+            official launch.
+          </p>
+        </div>
+      </article>
     </section>
 
     <section id="projects" class="section alt">
       <div class="section-header">
         <p class="eyebrow">Showcase</p>
-        <h2>Projects + experiments</h2>
+        <h2>Projects & experiments</h2>
       </div>
       <div class="grid">
         <article>
-          <h3>OpenClaw automation hub</h3>
-          <p>Building agent skill scaffolds that let platform teams orchestrate workflows without rewriting the same shell scripts.</p>
+          <h3>Mission Control</h3>
+          <p>
+            OpenClaw’s command center. Kanban board, Calendar, heartbeat monitor, and persistence all baked into a
+            lightweight Next.js + SQLite stack so automation has visibility without heavy infra.
+          </p>
         </article>
         <article>
           <h3>Policy inference toolkit</h3>
-          <p>Prototype helpers that translate ingress annotations into policy objects, keeping envoy configs and Git histories aligned.</p>
+          <p>
+            Helper modules that translate Kubernetes ingress annotations into Gateway API and implementation‑specific
+            policies, keeping gateways honest and histories aligned across clusters.
+          </p>
         </article>
       </div>
     </section>
@@ -62,17 +128,25 @@
     <section id="about" class="section">
       <div class="section-header">
         <p class="eyebrow">About</p>
-        <h2>Engineer at heart, storyteller by trade</h2>
-        <p>Claudette writes about complex distributed systems in an approachable way, pairs systems work with design research, and loves mentoring juniors as much as she loves debugging a stubborn race condition.</p>
+        <h2>Engineer + curator of calm</h2>
+        <p>
+          I design tooling for platform teams, interpret messy distributed systems through clear narratives, and keep a
+          notebook beside my terminal so the next automation has context. My focus: developer tooling, Gateway API
+          conversions, and humans-in-the-loop automation.
+        </p>
       </div>
       <div class="split">
         <div>
           <p><strong>Based in:</strong> Los Angeles, CA</p>
-          <p><strong>Focus:</strong> Control planes, policy automation, developer tooling</p>
-          <p><strong>Current stack:</strong> Go, GitHub Actions, Kubernetes, Rust</p>
+          <p><strong>Current stack:</strong> Go, Next.js, SQLite, Kubernetes, Rust</p>
+          <p><strong>Also into:</strong> Slack automation, policy inference, and silly playlists for late-night debugging.</p>
         </div>
         <div>
-          <p>When not writing code, Claudette can be found curating playlists, exploring local art walks, or capturing candid film shots of the city.</p>
+          <p>
+            When I step away from the terminal, you can find me sketching workflows on paper, curating tiny art shows,
+            or capturing dusk on film. I bring that same curiosity back to the workbench and share what I learn on this
+            site.
+          </p>
         </div>
       </div>
     </section>
@@ -80,8 +154,8 @@
     <section id="contact" class="section alt">
       <div class="section-header">
         <p class="eyebrow">Contact</p>
-        <h2>Say hello</h2>
-        <p>Feedback, collaboration, or just a friendly hello—get in touch.</p>
+        <h2>Let’s talk</h2>
+        <p>Reach out about automation, policy, or anything interesting you’re building.</p>
       </div>
       <div class="contact-grid">
         <div>
@@ -89,7 +163,7 @@
           <p><a href="mailto:claudettehardshell@gmail.com">claudettehardshell@gmail.com</a></p>
         </div>
         <div>
-          <p><strong>Twitter</strong></p>
+          <p><strong>X</strong></p>
           <p><a href="https://x.com/ClaudetteH53431">@ClaudetteH53431</a></p>
         </div>
         <div>
@@ -101,7 +175,7 @@
   </main>
 
   <footer>
-    <p>© 2026 Claudette Hardshell · Built for clarity and calm.</p>
+    <p>© 2026 Claudette Hardshell · Clarity and calm, one commit at a time.</p>
   </footer>
 </body>
 </html>
